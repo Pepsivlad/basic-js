@@ -20,13 +20,55 @@ const { NotImplementedError } = require('../extensions/index.js');
  * 
  */
 class VigenereCipheringMachine {
-  encrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+  constructor(type = true) {
+    this.isDirect = type;
+    this.letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
   }
-  decrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+  
+  encrypt(...args) {
+    if (args.length < 2 || args.includes(undefined)) {
+      throw new Error('Incorrect arguments!');
+    }
+    let ans = [];
+    let [msg, key] = args;
+    msg = msg.toUpperCase();
+    key = key.toUpperCase();
+
+    key = key.padEnd(msg.length, key);
+    let counter = 0;
+    msg.split('').forEach((item, index) =>{
+      if (this.letters.includes(item)) {
+        const passStr = this.letters.slice(this.letters.indexOf(item)).join('').padEnd(26, this.letters.join(''));
+        ans.push(passStr[this.letters.indexOf(key[index - counter])]);
+      } else {
+        ans.push(item);
+        counter++;
+      }
+    })
+    return (this.isDirect) ? ans.join('') : ans.reverse().join('');
+  }
+
+  decrypt(...args) {
+    if (args.length < 2 || args.includes(undefined)){
+      throw new Error('Incorrect arguments!');
+    }
+    let [msg, key] = args;
+    msg = msg.toUpperCase();
+    key = key.toUpperCase();
+    
+    key = key.padEnd(msg.length, key);
+    const ans = [];
+    let counter = 0;
+    msg.split('').forEach((item, index) =>{
+      if (this.letters.includes(item)){
+        const passStr = this.letters.slice(this.letters.indexOf(key[index - counter])).join('').padEnd(26, this.letters.join(''));
+        ans.push(this.letters[passStr.indexOf(item)]);
+      }else{
+        ans.push(item);
+        counter++;
+      }
+    })
+    return (this.isDirect) ? ans.join('') : ans.reverse().join('');
   }
 }
 
